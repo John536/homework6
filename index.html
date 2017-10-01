@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cool Topics with AJAX</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+        
+    <form id="newTopic">
+        <label for="topic-input">Add a Topic Bro</label>
+        <input type="text" id="topic-input">
+        <br>
+        <input id="add-topic" type="submit" value="Add a Topic Bro">
+    </form>
+    
+    <div id="topics-view"></div>
+
+    <!--<div id="buttons-view"></div>-->
+    <div id="topicButton"></div>
+    
+    <script type="text/javascript">
+    
+    var topics = ["dogs", "wolves", "bears", "coyote", "manbearpig"];
+
+    function displayArray() {
+        for (var i = 0; i < topics.length; i++) {
+            var a = $("<button>");
+            a.addClass("topic");
+            a.attr("data-name", topics[i]);
+            a.text(topics[i]);
+            $("#topicButton").append(a);
+
+        }
+    }
+    //calls initial display
+    displayArray();
+
+    //adds new topic input
+    $("#add-topic").on("click", function(event) {
+        event.preventDefault();
+        var topic = $("#topic-input").val().trim();
+        $("#topicButton").empty();
+        topics.push(topic);
+        displayArray();
+    })
+
+    console.log(topics);
+
+    //Whser clicks on a button, the page should grab 10 static, non-animated gif images from the GIPHY API and place them on the page.
+    //When the user clicks one of the still GIPHY images, the gif should animate. If the user clicks the gif again, it should stop playing.
+    //Under every gif, display its rating 
+    //Add a form to your page takes the value from a user input box and adds it into your topics array. Then make a function call that takes each topic in the array remakes the buttons on the page.
+
+    //ajax call for clicked button 
+    $("#topicButton button").on("click", function(event) {
+        event.preventDefault();
+        var newTopic = $(this).attr("data-name");
+        console.log(newTopic);
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + newTopic + "&api_key=dc6zaTOxFJmzC&limit=10";
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).done(function(response) {
+            console.log(response);
+            for (var i = 0; i < response.data.length; i++) {
+                $("#topics-view").append("<p>Rating: " + response.data[i].rating + "</p>");
+                var gif = response.data[i].images.downsized.url
+                var pic = response.data[i].images.downsized_still.url
+                $("#topics-view").append("<img src='" + pic + "'>");
+                $("#topics-view").on("click", function (event){
+                  for (var i = 0; i < response.data.length; i++) {
+                    $("#topics-view").append("<img src='" + gif + "'>");
+                  //$("img").attr("src='" + response.data[i].images.downsized.url + "'>")
+                }
+                //$("img").attr("<img src='" + 
+                })
+          
+            }
+        });
+      })
+
+
+       
+
+/*
+$(".gif").on("click", function() {
+      // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
+      var state = $(this).attr("data-state");
+      // If the clicked image's state is still, update its src attribute to what its data-animate value is.
+      // Then, set the image's data-state to animate
+      // Else set src to the data-still value
+      if (state === "still") {
+        $(this).attr("src", $(this).attr("data-animate"));
+        $(this).attr("data-state", "animate");
+      } else {
+        $(this).attr("src", $(this).attr("data-still"));
+        $(this).attr("data-state", "still");
+      }
+
+*/
+        
+    
+    </script>
+</body>
+
+</html>
